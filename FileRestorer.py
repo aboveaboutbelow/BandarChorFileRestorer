@@ -1,9 +1,9 @@
-# BandarChor FileRestorer v0.2.2 [2015-05-05]
+# BandarChor FileRestorer v0.2.2.1 [2015-05-10]
 import os, shutil, struct, sys, logging
 
 
 ### Set this to the suffix used on your files
-BANDARCHOR_SUFFIX = '.id-1234567890_fudx@lycos.com'
+BANDARCHOR_SUFFIX = '.id-1029384756_fudx@lycos.com'
 
 
 class FileRestorer(object):
@@ -19,11 +19,11 @@ class FileRestorer(object):
 		to have usable data.
 		Files with no recoverable data will be skipped.
 	"""
-	_ZIP_BYTES = bytearray("\x50\x4B\x03\x04\x50\x4B\x05\x06")
-	_OFFICE_BYTES = bytearray("\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1")
-	_JPG_BYTES = bytearray("\xFF\xD8\xFF\xE0")
+	_ZIP_BYTES = bytearray(b"\x50\x4B\x03\x04\x50\x4B\x05\x06")
+	_OFFICE_BYTES = bytearray(b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1")
+	_JPG_BYTES = bytearray(b"\xFF\xD8\xFF\xE0")
 	FILE_SIGNATURES = {
-			'PDF': bytearray("\x25\x50\x44\x46\x2D\x31\x2E\x33\x0A\x25\xC4\xE5\xF2\xE5\xEB\xA7"),
+			'PDF': bytearray(b"\x25\x50\x44\x46\x2D\x31\x2E\x33\x0A\x25\xC4\xE5\xF2\xE5\xEB\xA7"),
 			'XLS': _OFFICE_BYTES,
 			'DOC': _OFFICE_BYTES,
 			'PPT': _OFFICE_BYTES,
@@ -33,7 +33,7 @@ class FileRestorer(object):
 			'PPTX': _ZIP_BYTES,
 			'JPEG': _JPG_BYTES,
 			'JPG': _JPG_BYTES,
-			'TXT': bytearray("")
+			'TXT': bytearray(b"")
 		  }
 	FILL_BYTE = ord('#')
 
@@ -96,6 +96,7 @@ class FileRestorer(object):
 		assert(self.suffix)
 
 		logging.info("Recursively searching '{}' for files with filenames containing '{}'".format(target_dir, self.suffix))
+		print('')
 
 		attempted_recovery_count = 0
 		recovery_count = 0
