@@ -1,9 +1,9 @@
-# BandarChor FileRestorer v0.2.2.1 [2015-05-10]
+# BandarChor FileRestorer v0.2.3 [2015-05-13]
 import os, shutil, struct, sys, logging
 
 
 ### Set this to the suffix used on your files
-BANDARCHOR_SUFFIX = '.id-1029384756_fudx@lycos.com'
+BANDARCHOR_SUFFIX = '.id-1334663620_fudx@lycos.com'
 
 
 class FileRestorer(object):
@@ -70,12 +70,12 @@ class FileRestorer(object):
 		n_fill_bytes = enc_size - header_size
 		fill_bytes = bytearray([FileRestorer.FILL_BYTE for _ in range(n_fill_bytes)])
 
-		# TODO: file truncation
-
 		with open(dest, 'r+b') as f:
 			f.seek(0)
 			f.write(header)
 			f.write(fill_bytes)
+			f.seek(-4, os.SEEK_END)		# the last 4 bytes in the locked file are the first 4 of the encrypted block
+			f.truncate()
 
 		percent_recovered = 100 - int(100.0 * enc_size / file_size)
 		logging.info("SUCCESS: up to {}% file content recovered".format(percent_recovered))
