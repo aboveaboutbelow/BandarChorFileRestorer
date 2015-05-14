@@ -29,3 +29,8 @@ The malware only encrypts up to 30,000 bytes of a file. The first 4 bytes identi
 This script restores the file's extension and the file signature (and erases the encrypted bytes). This can make recovery easier. The percentage of recovered data is reported to identify files most likely to have usable data. Files with no recoverable data will be skipped.
 
 Note: The first 4 bytes of the encrypted file are appended to the end of the file and replaced with the size. The file is truncated to account for that.
+
+Analysis
+--------
+
+See https://github.com/tamamshud/BandarChor_CryptoLocker_Analysis
