@@ -3,7 +3,7 @@ import os, shutil, struct, sys, logging
 
 
 ### Set this to the suffix used on your files
-BANDARCHOR_SUFFIX = '.id-1334663620_fudx@lycos.com'
+BANDARCHOR_SUFFIX = '.id-1029384756_fudx@lycos.com'
 
 
 class FileRestorer(object):
@@ -34,6 +34,7 @@ class FileRestorer(object):
 			'JPEG': _JPG_BYTES,
 			'JPG': _JPG_BYTES,
 			'TXT': bytearray(b"")
+	        # ADD MORE FILE SIGNATURES HERE
 		  }
 	FILL_BYTE = ord('#')
 
