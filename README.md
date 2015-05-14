@@ -1,4 +1,3 @@
-
 Purpose
 -------
 
@@ -8,12 +7,18 @@ Restores the file signatures in files encrypted by [BandarChor](https://www.f-se
 Usage
 -----
 
-Set the suffix in the script (e.g. ".id-1029384756_fudx@lycos.com") and call it with the target dir:
+Install Python 3 from: https://www.python.org/downloads/
+
+Run the script and it will search from the current directory. (If file associations are not set up, right-click the script, 'Open With', and select Python.)
+
+The script will automatically identify affected files by the suffix. Recognised forms include: ".id-1029384756_fudx@lycos.com", ".id-6574839201_europay@india.com", and ".id-7465839201_fud@lycos.com" (where the number is any 10-digit string).
+
+The script can be run with a target directory:
 
 > scraper [TARGET_DIR]
 
 
-The directory will be recursively searched for files with the given suffix and patched if there is any recoverable content. The original files are not modified but copied with the prefix 'CORRUPT__'.
+The directory will be recursively searched for files with the given suffix and patched if there is any recoverable content. The original files are not modified but copied with the prefix 'CORRUPT__'. A recovery log will be saved to FileRestorer.log.
 
 
 Explanation

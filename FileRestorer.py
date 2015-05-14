@@ -1,9 +1,5 @@
-# BandarChor FileRestorer v0.2.3 [2015-05-13]
-import os, shutil, struct, sys, logging
-
-
-### Set this to the suffix used on your files
-BANDARCHOR_SUFFIX = '.id-1029384756_fudx@lycos.com'
+# BandarChor FileRestorer v0.2.4 [2015-05-14]
+import os, shutil, struct, sys, logging, re
 
 
 class FileRestorer(object):
@@ -19,6 +15,9 @@ class FileRestorer(object):
 		to have usable data.
 		Files with no recoverable data will be skipped.
 	"""
+
+	BANDARCHOR_SUFFIX_REGEX = r"\.id-\d{10}_((fudx?)|(europay))@((lycos)|(india))\.com$"
+
 	_ZIP_BYTES = bytearray(b"\x50\x4B\x03\x04\x50\x4B\x05\x06")
 	_OFFICE_BYTES = bytearray(b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1")
 	_JPG_BYTES = bytearray(b"\xFF\xD8\xFF\xE0")
@@ -38,9 +37,9 @@ class FileRestorer(object):
 		  }
 	FILL_BYTE = ord('#')
 
-	def __init__(self, suffix):
-		assert('.id-' in suffix)
-		self.suffix = suffix
+	def __init__(self):
+		self.pattern = FileRestorer.BANDARCHOR_SUFFIX_REGEX
+		assert('.id-' in self.pattern)
 
 	def _regenerate_header(self, src, dest, filetype, max_file_size):
 		logging.info("Processing {}".format(src))
@@ -82,8 +81,7 @@ class FileRestorer(object):
 		logging.info("SUCCESS: up to {}% file content recovered".format(percent_recovered))
 		return True
 
-	def _gen_save_filename(self, in_filename):
-		ext_to_remove = self.suffix
+	def _gen_save_filename(self, in_filename, ext_to_remove):
 		out_filename = in_filename.replace(ext_to_remove, '')
 		out_filename = 'CORRUPT__' + out_filename
 		return out_filename
@@ -94,20 +92,22 @@ class FileRestorer(object):
 			target_dir: the directory to scan (default: current working directory)
 			max_file_size: the maximum size in bytes of files to recover
 		"""
-		assert(self.suffix)
+		assert(self.pattern)
 
-		logging.info("Recursively searching '{}' for files with filenames containing '{}'".format(target_dir, self.suffix))
+		logging.info("Recursively searching '{}' for files with filenames matching '{}'".format(target_dir, self.pattern))
 		print('')
 
 		attempted_recovery_count = 0
 		recovery_count = 0
 		for root, dirs, filenames in os.walk(target_dir):
 			for filename in filenames:
-				if not filename.endswith(self.suffix):
+				if not self._is_encrypted_file(filename):
 					continue
+				ext_to_remove = self._get_encrypted_file_suffix(filename)
+
 				attempted_recovery_count += 1
 				in_file_path = os.path.join(root, filename)
-				out_file_path = os.path.join(root, self._gen_save_filename(filename))
+				out_file_path = os.path.join(root, self._gen_save_filename(filename, ext_to_remove))
 				filetype = os.path.splitext(out_file_path)[1].replace('.', '').upper()
 				success = self._regenerate_header(in_file_path, out_file_path, filetype, max_file_size)
 				recovery_count += 1 if success else 0
@@ -115,6 +115,13 @@ class FileRestorer(object):
 		print('')
 		logging.info("Recovered {} of {} files".format(recovery_count, attempted_recovery_count))
 
+	def _is_encrypted_file(self, filename):
+		match = re.search(self.pattern, filename)
+		return match != None
+
+	def _get_encrypted_file_suffix(self, filename):
+		suffix = re.search(self.pattern, filename).group(0)
+		return suffix
 
 
 def main():
@@ -122,10 +129,8 @@ def main():
 
 	target_dir = sys.argv[1] if len(sys.argv) == 2 else '.'
 
-	restorer = FileRestorer(BANDARCHOR_SUFFIX)
+	restorer = FileRestorer()
 	restorer.start(target_dir)
-
-
 
 
 def set_up_loggers():
