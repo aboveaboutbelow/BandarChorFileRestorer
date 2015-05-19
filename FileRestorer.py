@@ -158,7 +158,7 @@ def main():
 
 	restorer = FileRestorer(verbose=False)
 	# restorer.start(target_dir, ['pdf', 'xls'])
-	restorer.start(target_dir,)
+	restorer.start(target_dir)
 
 
 def set_up_loggers(log_filename='FileRestorer.log'):
