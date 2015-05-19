@@ -1,8 +1,8 @@
-# BandarChor FileRestorer v0.2.4 [2015-05-14]
+# BandarChor FileRestorer v0.2.5 [2015-05-19]
 import os, shutil, struct, sys, logging, re
 
 # Files with the following extensions are targeted by BandarChor:
-# .jpg, .jpeg, .doc, .rtf, .xls, .zip, .db3, .rar, .3gp, .cdr, .raw, .cpt, .m2v, .gzip, .docx, .pdf, .odt, .avi, .mkv, .ods, .arj, .cer, .mdb, .csv, .mpeg, .mov, .ppt, .orf, .nrw, .nx1, .nbd, .old, .odb, .odc, .sldprt, .wps, .sldasm, .sbs, .p12, .rx2, .rwl, .r3d, .qic, .odp, .pz3, .ptx, .pst, .txt, .pptm, .pef, .x3f, .tbl, .tis, .srw, .srf, .sr2, .spf, .sna, .sn1, .gho, .gbk, .iv2i, .keystore, .ldf, .m3d, .max, .fbf, .fdb, .fbk, .fbw, .fbx, .bak, .bkf, .bck, .erf, .as4, .asm, .asvx, .ate, .bac, .73b, .a3d, .abf, .abk, .accdb, .113, .xlsm, .xlsk, .xlsb, .dwg, .tib, .pwm, .wab, .key, .ppsx, .pptx, .xlsx, .1cd, .dbf
+# .113, .1cd, .3gp, .73b, .a3d, .abf, .abk, .accdb, .arj, .as4, .asm, .asvx, .ate, .avi, .bac, .bak, .bck, .bkf, .cdr, .cer, .cpt, .csv, .db3, .dbf, .doc, .docx, .dwg, .erf, .fbf, .fbk, .fbw, .fbx, .fdb, .gbk, .gho, .gzip, .iv2i, .jpeg, .jpg, .key, .keystore, .ldf, .m2v, .m3d, .max, .mdb, .mkv, .mov, .mpeg, .nbd, .nrw, .nx1, .odb, .odc, .odp, .ods, .odt, .old, .orf, .p12, .pdf, .pef, .ppsx, .ppt, .pptm, .pptx, .pst, .ptx, .pwm, .pz3, .qic, .r3d, .rar, .raw, .rtf, .rwl, .rx2, .sbs, .sldasm, .sldprt, .sn1, .sna, .spf, .sr2, .srf, .srw, .tbl, .tib, .tis, .txt, .wab, .wps, .x3f, .xls, .xlsb, .xlsk, .xlsm, .xlsx, .zip
 # Only a fraction of the file signatures for the associated types are included
 # You should manually add any additional signatures
 
@@ -26,6 +26,7 @@ class FileRestorer(object):
 	_ZIP_BYTES = bytearray(b"\x50\x4B\x03\x04\x50\x4B\x05\x06")
 	_OFFICE_BYTES = bytearray(b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1")
 	_JPG_BYTES = bytearray(b"\xFF\xD8\xFF\xE0")
+	_NO_BYTES = bytearray(b"")
 	FILE_SIGNATURES = {
 			'PDF': bytearray(b"\x25\x50\x44\x46\x2D\x31\x2E\x33\x0A\x25\xC4\xE5\xF2\xE5\xEB\xA7"),
 			'XLS': _OFFICE_BYTES,
@@ -37,7 +38,7 @@ class FileRestorer(object):
 			'PPTX': _ZIP_BYTES,
 			'JPEG': _JPG_BYTES,
 			'JPG': _JPG_BYTES,
-			'TXT': bytearray(b"")
+			'TXT': _NO_BYTES
 	        # ADD MORE FILE SIGNATURES HERE
 		  }
 	FILL_BYTE = ord('#')
@@ -157,7 +158,7 @@ def main():
 
 	restorer = FileRestorer(verbose=False)
 	# restorer.start(target_dir, ['pdf', 'xls'])
-	restorer.start(target_dir)
+	restorer.start(target_dir,)
 
 
 def set_up_loggers(log_filename='FileRestorer.log'):
