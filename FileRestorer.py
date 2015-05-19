@@ -37,18 +37,24 @@ class FileRestorer(object):
 		  }
 	FILL_BYTE = ord('#')
 
-	def __init__(self):
+	def __init__(self, verbose=True):
+		self.verbose = verbose
 		self.pattern = FileRestorer.BANDARCHOR_SUFFIX_REGEX
 		assert('.id-' in self.pattern)
 
 	def _regenerate_header(self, src, dest, filetype, max_file_size):
-		logging.info("Processing {}".format(src))
-		if filetype not in FileRestorer.FILE_SIGNATURES.keys():
-			logging.info("Skipped (no registered file signature for file type {})".format(filetype))
+		if filetype not in self.target_types:
+			if self.verbose:
+				logging.info("-- {}".format(src))
+				logging.info("Skipped ({} not an available target file type)".format(filetype))
 			return False
 		if os.path.isfile(dest):
-			logging.info("Skipped (already patched)")
+			if self.verbose:
+				logging.info("-- {}".format(src))
+				logging.info("Skipped (already patched)")
 			return False
+
+		logging.info("-- {}".format(src))
 
 		file_size = os.path.getsize(src)
 		if file_size > max_file_size:
@@ -60,7 +66,7 @@ class FileRestorer(object):
 			enc_size = struct.unpack('<L', bytes)[0]
 
 		if enc_size >= file_size-4:
-			logging.info("Skipped (no recoverable data)")
+			logging.info("Failed: no recoverable data")
 			return False
 
 		shutil.copyfile(src, dest)
@@ -78,7 +84,8 @@ class FileRestorer(object):
 			f.truncate()
 
 		percent_recovered = 100 - int(100.0 * enc_size / file_size)
-		logging.info("SUCCESS: up to {}% file content recovered".format(percent_recovered))
+
+		logging.info("SUCCESS: {}% of uncorrupted file content ({} of {} bytes)".format(percent_recovered, enc_size, file_size-4))
 		return True
 
 	def _gen_save_filename(self, in_filename, ext_to_remove):
@@ -86,15 +93,20 @@ class FileRestorer(object):
 		out_filename = 'CORRUPT__' + out_filename
 		return out_filename
 
-	def start(self, target_dir='.', max_file_size=100000000):
+	def start(self, target_dir='.', target_types=None, max_file_size=100000000):
 		""" Starts the file recovery process, recursively scanning from target_dir.
 		Args:
 			target_dir: the directory to scan (default: current working directory)
+			target_types: list of file types to target (default: None [includes all])
 			max_file_size: the maximum size in bytes of files to recover
 		"""
 		assert(self.pattern)
 
+		self._set_target_file_types(target_types)
+
 		logging.info("Recursively searching '{}' for files with filenames matching '{}'".format(target_dir, self.pattern))
+		logging.info("Targetting {} of {} known signatures: {}".format(
+				len(self.target_types), len(FileRestorer.FILE_SIGNATURES), ' '.join(self.target_types)))
 		print('')
 
 		attempted_recovery_count = 0
@@ -111,9 +123,18 @@ class FileRestorer(object):
 				filetype = os.path.splitext(out_file_path)[1].replace('.', '').upper()
 				success = self._regenerate_header(in_file_path, out_file_path, filetype, max_file_size)
 				recovery_count += 1 if success else 0
-				print('')
+				if self.verbose: print('')
 		print('')
 		logging.info("Recovered {} of {} files".format(recovery_count, attempted_recovery_count))
+
+	def _set_target_file_types(self, target_types):
+		avail_types = FileRestorer.FILE_SIGNATURES.keys()
+		if not target_types:
+			self.target_types = avail_types
+			return
+
+		self.target_types = [ext.upper() for ext in target_types if ext.upper() in avail_types]
+
 
 	def _is_encrypted_file(self, filename):
 		match = re.search(self.pattern, filename)
@@ -125,21 +146,22 @@ class FileRestorer(object):
 
 
 def main():
-	set_up_loggers()
+	set_up_loggers('FileRestorer.log')
 
 	target_dir = sys.argv[1] if len(sys.argv) == 2 else '.'
 
-	restorer = FileRestorer()
+	restorer = FileRestorer(verbose=False)
+	# restorer.start(target_dir, ['pdf', 'xls'])
 	restorer.start(target_dir)
 
 
-def set_up_loggers():
+def set_up_loggers(log_filename='FileRestorer.log'):
 	root = logging.getLogger()
 	root.setLevel(logging.INFO)
 	ch = logging.StreamHandler(sys.stdout)
 	ch.setLevel(logging.INFO)
 	ch.setFormatter(logging.Formatter('%(message)s'))
-	fh = logging.FileHandler('FileRestorer.log')
+	fh = logging.FileHandler(log_filename)
 	fh.setLevel(logging.INFO)
 	fh.setFormatter(logging.Formatter('%(asctime)s - %(message)s'))
 	root.addHandler(ch)
