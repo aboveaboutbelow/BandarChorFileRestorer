@@ -34,3 +34,10 @@ Analysis
 --------
 
 See https://github.com/tamamshud/BandarChor_CryptoLocker_Analysis
+
+Targeted Files
+--------------
+
+BandarChor targets files in user directories with these extensions:
+
+.113, .1cd, .3gp, .73b, .a3d, .abf, .abk, .accdb, .arj, .as4, .asm, .asvx, .ate, .avi, .bac, .bak, .bck, .bkf, .cdr, .cer, .cpt, .csv, .db3, .dbf, .doc, .docx, .dwg, .erf, .fbf, .fbk, .fbw, .fbx, .fdb, .gbk, .gho, .gzip, .iv2i, .jpeg, .jpg, .key, .keystore, .ldf, .m2v, .m3d, .max, .mdb, .mkv, .mov, .mpeg, .nbd, .nrw, .nx1, .odb, .odc, .odp, .ods, .odt, .old, .orf, .p12, .pdf, .pef, .ppsx, .ppt, .pptm, .pptx, .pst, .ptx, .pwm, .pz3, .qic, .r3d, .rar, .raw, .rtf, .rwl, .rx2, .sbs, .sldasm, .sldprt, .sn1, .sna, .spf, .sr2, .srf, .srw, .tbl, .tib, .tis, .txt, .wab, .wps, .x3f, .xls, .xlsb, .xlsk, .xlsm, .xlsx, .zip
