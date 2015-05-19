@@ -1,6 +1,11 @@
 # BandarChor FileRestorer v0.2.4 [2015-05-14]
 import os, shutil, struct, sys, logging, re
 
+# Files with the following extensions are targeted by BandarChor:
+# .jpg, .jpeg, .doc, .rtf, .xls, .zip, .db3, .rar, .3gp, .cdr, .raw, .cpt, .m2v, .gzip, .docx, .pdf, .odt, .avi, .mkv, .ods, .arj, .cer, .mdb, .csv, .mpeg, .mov, .ppt, .orf, .nrw, .nx1, .nbd, .old, .odb, .odc, .sldprt, .wps, .sldasm, .sbs, .p12, .rx2, .rwl, .r3d, .qic, .odp, .pz3, .ptx, .pst, .txt, .pptm, .pef, .x3f, .tbl, .tis, .srw, .srf, .sr2, .spf, .sna, .sn1, .gho, .gbk, .iv2i, .keystore, .ldf, .m3d, .max, .fbf, .fdb, .fbk, .fbw, .fbx, .bak, .bkf, .bck, .erf, .as4, .asm, .asvx, .ate, .bac, .73b, .a3d, .abf, .abk, .accdb, .113, .xlsm, .xlsk, .xlsb, .dwg, .tib, .pwm, .wab, .key, .ppsx, .pptx, .xlsx, .1cd, .dbf
+# Only a fraction of the file signatures for the associated types are included
+# You should manually add any additional signatures
+
 
 class FileRestorer(object):
 	""" Restores the file signatures in files encrypted by BandarChor cryptolocker malware.
@@ -105,7 +110,7 @@ class FileRestorer(object):
 		self._set_target_file_types(target_types)
 
 		logging.info("Recursively searching '{}' for files with filenames matching '{}'".format(target_dir, self.pattern))
-		logging.info("Targetting {} of {} known signatures: {}".format(
+		logging.info("Targeting {} of {} known signatures: {}".format(
 				len(self.target_types), len(FileRestorer.FILE_SIGNATURES), ' '.join(self.target_types)))
 		print('')
 
