@@ -21,7 +21,7 @@ class FileRestorer(object):
 		Files with no recoverable data will be skipped.
 	"""
 
-	BANDARCHOR_SUFFIX_REGEX = r"\.id-\d{10}_((fudx?)|(europay))@((lycos)|(india))\.com$"
+	BANDARCHOR_SUFFIX_REGEX = r"\.id-\d{10}_((fudx?)|(europay)|(paybtc))@((lycos)|(india))\.com$"
 
 	_ZIP_BYTES = bytearray(b"\x50\x4B\x03\x04\x50\x4B\x05\x06")
 	_OFFICE_BYTES = bytearray(b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1")
@@ -91,7 +91,7 @@ class FileRestorer(object):
 
 		percent_recovered = 100 - int(100.0 * enc_size / file_size)
 
-		logging.info("SUCCESS: {}% of uncorrupted file content ({} of {} bytes)".format(percent_recovered, enc_size, file_size-4))
+		logging.info("{}% of uncorrupted file content ({} of {} bytes)".format(percent_recovered, enc_size, file_size-4))
 		return True
 
 	def _gen_save_filename(self, in_filename, ext_to_remove):
